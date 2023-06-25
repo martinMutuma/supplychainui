@@ -4,7 +4,7 @@ import { ChainItemType } from "../../apptypes";
 import DataTableBase from "../Base/DataTableBase";
 import { ChainItemsListTK } from "../../features/chainItems/chainItemsThunk";
 import { TableColumn } from "react-data-table-component";
-import { Button, ButtonGroup, Row } from "react-bootstrap";
+import { Button, ButtonGroup } from "react-bootstrap";
 import { ShowJsonObjectDataModal } from "../Base/DisplayData";
 import { Eye } from "react-bootstrap-icons";
 

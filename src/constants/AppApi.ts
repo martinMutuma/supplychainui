@@ -1,5 +1,5 @@
 import axios from "axios";
-import { LoggedUserType, LoginUserDataType } from "../apptypes";
+import { LoginUserDataType } from "../apptypes";
 import ApiEndPoints, { APIBASEURL } from "./apiRoutes";
 
 export const userAccessTokenKey = "userAccessTokenKey";

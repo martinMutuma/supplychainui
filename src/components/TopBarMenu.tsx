@@ -1,5 +1,5 @@
 import { ReactElement } from "react";
-import { Button, Container, Nav, Navbar } from "react-bootstrap";
+import { Container, Nav, Navbar } from "react-bootstrap";
 import appRoutes from "../routes";
 import { LinkContainer } from "react-router-bootstrap";
 import { useAppDispatch, useAppSelector } from "../app/hooks";

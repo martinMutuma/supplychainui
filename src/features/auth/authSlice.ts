@@ -46,10 +46,10 @@ const userLoginSlice = createSlice({
         }
         return state;
       })
-      .addMatcher(isPendingAction, (state, action) => {
+      .addMatcher(isPendingAction, (state) => {
         state.loading = true;
       })
-      .addMatcher(isFulfilledAction, (state, action) => {
+      .addMatcher(isFulfilledAction, (state) => {
         state.loading = false;
         state.error = "";
       })
