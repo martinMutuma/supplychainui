@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, Modal } from "react-bootstrap";
+import { Button, Container, Modal } from "react-bootstrap";
 import Table from "react-bootstrap/Table";
 interface universalKeyPair {
   [key: string]: any;
@@ -7,18 +7,28 @@ interface universalKeyPair {
 const ShowJsonObjectData = ({ scObject }: universalKeyPair): JSX.Element => {
   const scObjectKeys = Object.keys(scObject);
   return (
-    <Table striped bordered hover>
-      <tbody>
-        {scObjectKeys?.map((key) => {
-          return (
-            <tr>
-              <td>{key}:</td>
-              <td>{scObject[key]}</td>
-            </tr>
-          );
-        })}
-      </tbody>
-    </Table>
+    <Container>
+      <Table striped bordered hover>
+        <tbody>
+          {scObjectKeys?.map((key) => {
+            return (
+              <tr key={key}>
+                <td>{key}:</td>
+                <td>
+                  {scObject[key] && typeof scObject[key] === "object" ? (
+                    <ShowJsonObjectData
+                      scObject={scObject[key]}
+                    ></ShowJsonObjectData>
+                  ) : (
+                    scObject[key]
+                  )}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </Table>
+    </Container>
   );
 };
 interface ScObJectShowProps {
@@ -43,7 +53,13 @@ export const ShowJsonObjectDataModal = ({
 
   return (
     <>
-      <Modal show={show} onHide={handleClose}>
+      <Modal
+        show={show}
+        onHide={handleClose}
+        size="lg"
+        centered
+        scrollable={true}
+      >
         <Modal.Header closeButton>
           <Modal.Title>{title}</Modal.Title>
         </Modal.Header>

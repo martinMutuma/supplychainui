@@ -1,18 +1,51 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { ChainItemType } from "../../apptypes";
 import DataTableBase from "../Base/DataTableBase";
-import { ChainItemsListTK } from "../../features/chainItems/chainItemsThunk";
+import {
+  ChainItemsListTK,
+  DeleteChainItemTK,
+} from "../../features/chainItems/chainItemsThunk";
 import { TableColumn } from "react-data-table-component";
 import { Button, ButtonGroup } from "react-bootstrap";
 import { ShowJsonObjectDataModal } from "../Base/DisplayData";
-import { Eye } from "react-bootstrap-icons";
+import {
+  Eye,
+  PencilSquare,
+  SkipEndBtn,
+  Trash,
+  ViewList,
+} from "react-bootstrap-icons";
+import {
+  LazyUpdateCurrentDeletedItem,
+  SetCurrentSupplyChainItem,
+} from "../../features/chainItems/chainItemsSlice";
+import { SetCurrentEventsSupplyChainIItem } from "../../features/chainEvents/chainEventsSlice";
+import { useNavigate } from "react-router-dom";
 
 const ListChainItems = () => {
   const chainItemsList = useAppSelector(
     (state) => state.ChainItems.chainItemsList
   );
   const diapatchAction = useAppDispatch();
+  const navigate = useNavigate();
+
+  const SetCurrentItem = (supplyChainItem: ChainItemType) => {
+    diapatchAction(SetCurrentSupplyChainItem(supplyChainItem));
+  };
+  const SetCurrentEventsItem = (supplyChainItem: ChainItemType) => {
+    diapatchAction(SetCurrentEventsSupplyChainIItem(supplyChainItem));
+  };
+  const DeleteCurrentItem = (supplyChainItem: ChainItemType) => {
+    if (
+      supplyChainItem &&
+      confirm("Are sure you want to delete this Item?") == true
+    ) {
+      diapatchAction(DeleteChainItemTK(supplyChainItem.id)).then(() => {
+        diapatchAction(LazyUpdateCurrentDeletedItem(supplyChainItem));
+      });
+    }
+  };
 
   const columns: TableColumn<ChainItemType>[] = [
     {
@@ -36,11 +69,11 @@ const ListChainItems = () => {
       selector: (rowItem) => rowItem.weight,
       sortable: true,
     },
-    {
-      name: "Dimensions",
-      selector: (rowItem) => rowItem.dimensions,
-      sortable: true,
-    },
+    // {
+    //   name: "Dimensions",
+    //   selector: (rowItem) => rowItem.dimensions,
+    //   sortable: true,
+    // },
     {
       name: "Price",
       selector: (rowItem) => rowItem.price,
@@ -58,17 +91,35 @@ const ListChainItems = () => {
       sortable: true,
     },
     {
+      name: "Items",
       button: true,
       cell: (rowItem) => {
         const [show, setShow] = useState(false);
         const handleShow = () => {
           setShow(true);
         };
+        const handleEdit = () => {
+          SetCurrentItem(rowItem);
+        };
+        const handleDelete = () => {
+          DeleteCurrentItem(rowItem);
+        };
         return (
           <>
             <ButtonGroup size="sm">
               <Button variant="outline-primary" size="sm" onClick={handleShow}>
                 <Eye></Eye>
+              </Button>
+
+              <Button
+                variant="outline-secondary"
+                size="sm"
+                onClick={handleEdit}
+              >
+                <PencilSquare></PencilSquare>
+              </Button>
+              <Button variant="outline-danger" size="sm" onClick={handleDelete}>
+                <Trash></Trash>
               </Button>
             </ButtonGroup>
             {show == true && (
@@ -83,18 +134,58 @@ const ListChainItems = () => {
         );
       },
     },
+    {
+      name: "Events",
+      button: true,
+      cell: (rowItem) => {
+        const handleShowEvents = () => {
+          SetCurrentEventsItem(rowItem);
+          navigate("/event");
+        };
+        const handleShowLastEvent = () => {
+          SetCurrentEventsItem(rowItem);
+        };
+        return (
+          <>
+            <ButtonGroup size="sm">
+              <Button
+                title="Show item Events"
+                variant="outline-info"
+                size="sm"
+                onClick={handleShowEvents}
+              >
+                <ViewList></ViewList>
+              </Button>
+
+              <Button
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                title="Show last Event"
+                variant="outline-info"
+                size="sm"
+                onClick={handleShowLastEvent}
+              >
+                <SkipEndBtn></SkipEndBtn>
+              </Button>
+            </ButtonGroup>
+          </>
+        );
+      },
+    },
   ];
 
-  useEffect(() => {
+  useMemo(() => {
     diapatchAction(ChainItemsListTK());
   }, []);
+  useEffect(() => {}, [chainItemsList]);
 
   return (
     <>
       <DataTableBase
-        title="Supply Chain Items"
         columns={columns}
         data={chainItemsList}
+        defaultSortFieldId="id"
+        defaultSortAsc={false}
       />
     </>
   );

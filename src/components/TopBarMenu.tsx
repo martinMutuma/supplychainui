@@ -24,7 +24,7 @@ const TopBarMenu = (): ReactElement => {
     navigate("/login");
   };
   return (
-    <Navbar className="mb-2 border-bottom" sticky="top">
+    <Navbar className="mb-2 border-bottom">
       <Container>
         <LinkContainer to="/">
           <Navbar.Brand className="text-dark text-decoration-none">

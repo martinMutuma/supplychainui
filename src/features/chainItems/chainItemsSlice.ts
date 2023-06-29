@@ -12,13 +12,45 @@ const initialState: ChainItemTypeListStateType = {
   chainItemsList: [],
   loading: false,
   error: null,
-  CurrentItem: null,
+  CurrentEditItem: null,
+  CurrentDeleteItem: null,
 };
 
 const chainItemsSlice = createSlice({
   name: "ChainItems",
   initialState,
-  reducers: {},
+  reducers: {
+    SetCurrentSupplyChainItem: (state, action) => {
+      return { ...state, CurrentEditItem: action.payload };
+    },
+    SetCurrentSupplyDeleteChainItem: (state, action) => {
+      return { ...state, CurrentDeleteItem: action.payload };
+    },
+    LazyUpdateCurrentEditedItem: (state, action) => {
+      if (action && action?.payload?.id) {
+        const undEditedItems = state.chainItemsList.filter(
+          (x) => x.id != action.payload.id
+        );
+        return {
+          ...state,
+          chainItemsList: [...undEditedItems, action.payload],
+        };
+      }
+      return state;
+    },
+    LazyUpdateCurrentDeletedItem: (state, action) => {
+      if (action && action?.payload?.id) {
+        const undEditedItems = state.chainItemsList.filter(
+          (x) => x.id != action.payload.id
+        );
+        return {
+          ...state,
+          chainItemsList: [...undEditedItems],
+        };
+      }
+      return state;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(ChainItemsListTK.fulfilled, (state, action: AnyAction) => {
@@ -38,6 +70,11 @@ const chainItemsSlice = createSlice({
   },
 });
 
-// export const { IsUserLoggeIn, LogoutCurrentUser } = chainItemsSlice.actions;
+export const {
+  SetCurrentSupplyChainItem,
+  LazyUpdateCurrentEditedItem,
+  LazyUpdateCurrentDeletedItem,
+  SetCurrentSupplyDeleteChainItem,
+} = chainItemsSlice.actions;
 
 export default chainItemsSlice.reducer;

@@ -1,3 +1,4 @@
+import { Container, Row } from "react-bootstrap";
 import { ArrowDown } from "react-bootstrap-icons";
 import DataTable, { TableProps, TableStyles } from "react-data-table-component";
 
@@ -31,19 +32,23 @@ const customStyle: TableStyles = {
 
 function DataTableBase<T>(props: TableProps<T>): JSX.Element {
   return (
-    <DataTable
-      responsive
-      selectableRowsComponentProps={selectProps}
-      sortIcon={sortIcon}
-      className="table table-hover border"
-      fixedHeader={true}
-      fixedHeaderScrollHeight="60%"
-      customStyles={customStyle}
-      pagination
-      dense
-      selectableRows
-      {...props}
-    />
+    <Container>
+      <Row>
+        <DataTable
+          responsive
+          selectableRowsComponentProps={selectProps}
+          sortIcon={sortIcon}
+          className="table table-hover border"
+          fixedHeader={true}
+          fixedHeaderScrollHeight="60%"
+          customStyles={customStyle}
+          pagination
+          dense
+          selectableRows
+          {...props}
+        />
+      </Row>
+    </Container>
   );
 }
 

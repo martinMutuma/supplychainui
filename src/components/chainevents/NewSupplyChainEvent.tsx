@@ -2,7 +2,7 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { ChainEventType, UserType } from "../../apptypes";
+import { ChainEventSaveType, ChainEventType } from "../../apptypes";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { useEffect, useMemo, useState } from "react";
 
@@ -15,7 +15,6 @@ import {
 } from "../../features/chainEvents/chainEventsThunk";
 import { LazyUpdateCurrentEditedChainEvent } from "../../features/chainEvents/chainEventsSlice";
 import { GetUserListTK } from "../../features/auth/authThunk";
-import Select from "react-select";
 
 interface EditEventProps {
   SchainIEventId: number;
@@ -34,11 +33,6 @@ const initialSypplyItemEvent: ChainEventType = {
 const SupplyChainEventForm = ({
   SchainIEventId,
 }: EditEventProps): JSX.Element => {
-  const [supplyChainItemEvent, setSupplyChainItemEvent] =
-    useState<ChainEventType>({
-      ...initialSypplyItemEvent,
-      id: SchainIEventId,
-    });
   const dispatchAction = useAppDispatch();
 
   const userList = useAppSelector((state) => state.UserList.UserList);
@@ -48,6 +42,16 @@ const SupplyChainEventForm = ({
   const eventStatusList = useAppSelector(
     (state) => state.EventStatusList.EventStatusList
   );
+  const currentEditItem = useAppSelector(
+    (state) => state.ChainEvents.SupplyChainIItem
+  );
+
+  const [supplyChainItemEvent, setSupplyChainItemEvent] =
+    useState<ChainEventType>({
+      ...initialSypplyItemEvent,
+      id: SchainIEventId,
+      item: currentEditItem,
+    });
 
   useEffect(() => {
     if (supplyChainItemEvent && supplyChainItemEvent.id > 0) {
@@ -76,7 +80,36 @@ const SupplyChainEventForm = ({
   });
 
   const onSypplyFormFormSubmit: SubmitHandler<ChainEventType> = (data) => {
-    dispatchAction(SaveChainEventTK({ ...supplyChainItemEvent, ...data }))
+    const eventStatus = eventStatusList.find(
+      (x) => x.id == (data as ChainEventType).event_status?.id
+    );
+    const eventType = eventTypesList.find(
+      (x) => x.id == (data as ChainEventType).event_type?.id
+    );
+
+    const custodian = userList.find(
+      (x) => x.id == (data as ChainEventType).custodian?.id
+    );
+
+    let submitData = {
+      ...supplyChainItemEvent,
+      ...(data as ChainEventType),
+    } as ChainEventSaveType;
+
+    if (currentEditItem) {
+      submitData.item = currentEditItem.id;
+    }
+    if (eventStatus) {
+      submitData.event_status = eventStatus.id;
+    }
+    if (eventType) {
+      submitData.event_type = eventType.id;
+    }
+    if (custodian) {
+      submitData.custodian = custodian.id;
+    }
+
+    dispatchAction(SaveChainEventTK(submitData))
       .unwrap()
       .then((responseData) => {
         if (responseData) {
@@ -84,6 +117,9 @@ const SupplyChainEventForm = ({
           setSupplyChainItemEvent(itemDt);
           dispatchAction(LazyUpdateCurrentEditedChainEvent(itemDt));
         }
+      })
+      .catch((errors) => {
+        console.log(errors);
       });
   };
 
@@ -107,10 +143,16 @@ const SupplyChainEventForm = ({
               <Form.Group as={Col} className={formMargin}>
                 <Form.Label>Custodian</Form.Label>
 
-                <Form.Select aria-label="Select Custodian">
+                <Form.Select
+                  aria-label="Select Custodian"
+                  {...register("custodian.id")}
+                >
                   {userList?.map((user) => {
                     return (
-                      <option value={user.id?.toString()}>
+                      <option
+                        key={user.id?.toString()}
+                        value={user.id as number}
+                      >
                         {user.username!}{" "}
                       </option>
                     );
@@ -120,10 +162,16 @@ const SupplyChainEventForm = ({
               <Form.Group as={Col} className={formMargin}>
                 <Form.Label>Event Type</Form.Label>
 
-                <Form.Select aria-label="Select Custodian">
+                <Form.Select
+                  aria-label="Select Type"
+                  {...register("event_type.id")}
+                >
                   {eventTypesList?.map((eventType) => {
                     return (
-                      <option value={eventType.id?.toString()}>
+                      <option
+                        key={eventType.id?.toString()}
+                        value={eventType.id as number}
+                      >
                         {eventType.name!}{" "}
                       </option>
                     );
@@ -149,10 +197,16 @@ const SupplyChainEventForm = ({
               <Form.Group as={Col} className={formMargin}>
                 <Form.Label>Event Status</Form.Label>
 
-                <Form.Select aria-label="Select Custodian">
+                <Form.Select
+                  aria-label="Select Status"
+                  {...register("event_status.id")}
+                >
                   {eventStatusList?.map((eventStatus) => {
                     return (
-                      <option value={eventStatus.id?.toString()}>
+                      <option
+                        key={eventStatus.id?.toString()}
+                        value={eventStatus.id as number}
+                      >
                         {eventStatus.name!}{" "}
                       </option>
                     );

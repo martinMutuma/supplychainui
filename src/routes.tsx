@@ -1,7 +1,8 @@
 import { ComponentType } from "react";
 import Login from "./components/auth/Login";
 import HomePage from "./components/Home";
-import ListChainItems from "./components/chainitems/ListChainItems";
+import ChainItemsDashBoard from "./components/chainitems/ChainItemsDashBoard";
+import ChainEventsDashBoard from "./components/chainevents/ChainEventsDashBoard";
 
 export type AppRouteType = {
   path: string;
@@ -18,10 +19,15 @@ const appRoutes: AppRouteType[] = [
   {
     path: "/items",
     title: "Chain Items",
-    component: ListChainItems,
+    component: ChainItemsDashBoard,
     showInTopMenu: true,
   },
-  { path: "/event", title: "Chain Events", showInTopMenu: true },
+  {
+    path: "/event",
+    title: "Chain Events",
+    component: ChainEventsDashBoard,
+    showInTopMenu: true,
+  },
   { path: "/about", title: "About", showInTopMenu: true },
   {
     path: "/login",
