@@ -15,16 +15,12 @@ export const ChainEventsListTK = createAsyncThunk(
 );
 export const ChainItemsEventsListTK = createAsyncThunk(
   "ChainItemsEventsList",
-  (itemId: number) =>
-    SC_API.ChainEventsAPI.ListChainItemEvents(itemId) as AxiosPromise<
-      ChainEventType[]
-    >
+  (itemId: number) => SC_API.ChainEventsAPI.ListChainItemEvents(itemId)
 );
 
 export const GetChainEventTK = createAsyncThunk(
   "GetCurrentEvent",
-  (Id: Number) =>
-    SC_API.ChainEventsAPI.GetSChainEvent(Id) as AxiosPromise<ChainEventType>
+  (Id: Number) => SC_API.ChainEventsAPI.GetSChainEvent(Id)
 );
 
 export const SaveChainEventTK = createAsyncThunk(
@@ -58,8 +54,5 @@ export const ChainEventsStatusListTK = createAsyncThunk(
 
 export const GetChainItemLatestEventTK = createAsyncThunk(
   "GetCurrentItemLatestEvent",
-  (ItemId: Number) =>
-    SC_API.ChainEventsAPI.GetSChainEvent(ItemId) as AxiosPromise<
-      ChainEventType[]
-    >
+  (ItemId: number) => SC_API.ChainEventsAPI.GetChainItemLatestEvent(ItemId)
 );

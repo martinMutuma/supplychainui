@@ -7,10 +7,7 @@ import { TableColumn } from "react-data-table-component";
 import { Button, ButtonGroup } from "react-bootstrap";
 import { ShowJsonObjectDataModal } from "../Base/DisplayData";
 import { Eye, PencilSquare, Trash } from "react-bootstrap-icons";
-import {
-  LazyUpdateCurrentDeletedChainEvent,
-  SetCurrentSupplyChainEditChainEvent,
-} from "../../features/chainEvents/chainEventsSlice";
+import { SetCurrentSupplyChainEditChainEvent } from "../../features/chainEvents/chainEventsSlice";
 import {
   ChainItemsEventsListTK,
   DeleteChainEventTK,
@@ -34,7 +31,9 @@ const ListChainEvents = () => {
       confirm("Are sure you want to delete this Event?") == true
     ) {
       diapatchAction(DeleteChainEventTK(supplyChainEvent.id)).then(() => {
-        diapatchAction(LazyUpdateCurrentDeletedChainEvent(supplyChainEvent));
+        if (supplyChainIItem) {
+          diapatchAction(ChainItemsEventsListTK(supplyChainIItem.id));
+        }
       });
     }
   };
@@ -60,7 +59,9 @@ const ListChainEvents = () => {
     },
     {
       name: "Type",
-      selector: (rowItem) => rowItem?.event_type?.name!,
+      selector: (rowItem) => {
+        return rowItem?.event_type?.name!;
+      },
       sortable: true,
     },
     {

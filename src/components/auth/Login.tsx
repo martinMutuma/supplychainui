@@ -7,32 +7,36 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { LoginCurrentUserTK } from "../../features/auth/authThunk";
 import { useNavigate } from "react-router-dom";
 
+const initialUser: LoginUserDataType = {
+  username: "martin",
+  password: "xc1234",
+};
 const Login = () => {
   const loggedInUser = useAppSelector((state) => state.loggedInUser);
+
   const {
     register,
     handleSubmit,
     formState: { errors, touchedFields },
-  } = useForm<LoginUserDataType>();
+  } = useForm<LoginUserDataType>({ defaultValues: initialUser });
 
-  const diapatch = useAppDispatch();
+  const dispatchAction = useAppDispatch();
   const navigate = useNavigate();
 
   const onLoginFormSubmit: SubmitHandler<LoginUserDataType> = (data) => {
-    diapatch(LoginCurrentUserTK(data));
+    dispatchAction(LoginCurrentUserTK(data));
   };
 
   if (loggedInUser.isLoggedIn && loggedInUser.access) {
     navigate("/home");
   }
-
   return (
     <>
       <Form
         className="position-absolute top-50 start-50 translate-middle"
         onSubmit={handleSubmit(onLoginFormSubmit)}
       >
-        <Card className=" " style={{ width: "22rem" }}>
+        <Card className="mb-2 " style={{ width: "22rem" }}>
           <Card.Body>
             <Card.Title as="h5" className="mb-3 text-center">
               Login
@@ -45,7 +49,6 @@ const Login = () => {
                 }
                 type="text"
                 placeholder="Enter username"
-                value="martin"
                 {...register("username", { required: true })}
               />
             </Form.Group>
@@ -58,7 +61,6 @@ const Login = () => {
                 }
                 type="password"
                 placeholder="Password"
-                value="zx1234"
                 {...register("password", { required: true })}
               />
             </Form.Group>

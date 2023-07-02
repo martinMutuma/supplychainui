@@ -36,14 +36,19 @@ function postApiCall(endPoint: string, data: any) {
     });
 }
 
-function getApiCall(endPoint: string) {
+function getApiCall(
+  endPoint: string,
+  params?: { [key: string]: string | number }
+) {
   endPoint = ApiEndPointUrl(endPoint);
-  return axios.get(endPoint, { headers: authHeader() }).then((response) => {
-    if (response.data) {
-      return response.data;
-    }
-    return response;
-  });
+  return axios
+    .get(endPoint, { headers: authHeader(), params })
+    .then((response) => {
+      if (response.data) {
+        return response.data;
+      }
+      return response;
+    });
 }
 function putApiCall(endPoint: string, data: any) {
   endPoint = ApiEndPointUrl(endPoint);
@@ -105,13 +110,9 @@ const ChainEventsAPI = {
   ListChainEvents: () => {
     return getApiCall(ApiEndPoints.LISTCHAINEVENTS);
   },
-  ListChainItemEvents: (itemId: number) => {
-    const cUrl = path.join(
-      ApiEndPoints.LISTCHAINEITEMSVENTS,
-      itemId.toString(),
-      "/"
-    );
-    return getApiCall(cUrl);
+  ListChainItemEvents: (itemid: number) => {
+    const cUrl = ApiEndPoints.LISTCHAINEITEMEVENTS;
+    return getApiCall(cUrl, { itemid });
   },
   GetSChainEvent: (Id: Number) => {
     return getApiCall(
@@ -142,13 +143,9 @@ const ChainEventsAPI = {
   ListChainEventStatuses: () => {
     return getApiCall(ApiEndPoints.LISTCHAINEVENTSTATUS);
   },
-  GetChainItemLatestEvent: (itemId: number) => {
-    const cUrl = path.join(
-      ApiEndPoints.LISTCHAINEITEMSVENTS,
-      itemId.toString(),
-      "/latest/"
-    );
-    return getApiCall(cUrl);
+  GetChainItemLatestEvent: (itemid: number) => {
+    const cUrl = ApiEndPoints.LISTCHAINEITEMLATESTEVENT;
+    return getApiCall(cUrl, { itemid });
   },
 };
 

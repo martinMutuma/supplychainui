@@ -13,8 +13,8 @@ import {
   GetChainEventTK,
   SaveChainEventTK,
 } from "../../features/chainEvents/chainEventsThunk";
-import { LazyUpdateCurrentEditedChainEvent } from "../../features/chainEvents/chainEventsSlice";
 import { GetUserListTK } from "../../features/auth/authThunk";
+import { SetCurrentSupplyChainEditChainEvent } from "../../features/chainEvents/chainEventsSlice";
 
 interface EditEventProps {
   SchainIEventId: number;
@@ -114,8 +114,7 @@ const SupplyChainEventForm = ({
       .then((responseData) => {
         if (responseData) {
           const itemDt = responseData as unknown as ChainEventType;
-          setSupplyChainItemEvent(itemDt);
-          dispatchAction(LazyUpdateCurrentEditedChainEvent(itemDt));
+          setSupplyChainItemEvent({ ...supplyChainItemEvent, id: itemDt.id });
         }
       })
       .catch((errors) => {
@@ -280,10 +279,12 @@ export const SupplyChainEventForModal = ({
   schainEvent,
 }: SupplyChainItemModalProps): JSX.Element => {
   const [show, setShow] = useState(ShowModal);
+  const dispatchAction = useAppDispatch();
 
   const handleClose = () => {
     setShow(false);
     SetShowHandle(false);
+    dispatchAction(SetCurrentSupplyChainEditChainEvent(null));
   };
 
   return (

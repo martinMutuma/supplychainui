@@ -45,7 +45,6 @@ export const ShowJsonObjectDataModal = ({
   title,
 }: ScObJectShowProps): JSX.Element => {
   const [show, setShow] = useState(ShowModal);
-
   const handleClose = () => {
     setShow(false);
     SetShowHandle(false);

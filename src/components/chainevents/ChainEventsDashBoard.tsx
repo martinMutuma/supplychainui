@@ -1,22 +1,23 @@
 import { Button, ButtonGroup, Col, Container, Row } from "react-bootstrap";
 import ListChainEvents from "./ListChainEvents";
-import { PlusLg } from "react-bootstrap-icons";
+import { Arrow90degLeft, PlusLg } from "react-bootstrap-icons";
 import { SupplyChainEventForModal } from "./NewSupplyChainEvent";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { SetCurrentSupplyChainItem } from "../../features/chainItems/chainItemsSlice";
 import ShowJsonObjectData from "../Base/DisplayData";
-import { ChainItemType } from "../../apptypes";
+import { ChainItemsEventsListTK } from "../../features/chainEvents/chainEventsThunk";
+import { useNavigate } from "react-router-dom";
 
 const ChainEventsDashBoard = () => {
-  const currentEditItem: ChainItemType | null | undefined = useAppSelector(
-    (state) => state.ChainItems.CurrentEditItem
-  );
   const supplyChainIItem = useAppSelector(
     (state) => state.ChainEvents.SupplyChainIItem
   );
+  const supplyChainIEditItem = useAppSelector(
+    (state) => state.ChainEvents.CurrentEditChainEvent
+  );
 
-  const diapatchAction = useAppDispatch();
+  const dispatchAction = useAppDispatch();
+  const navigate = useNavigate();
 
   const [showEditModal, setShowEditModal] = useState(false);
   const [itemEditId, setItemEditId] = useState(0);
@@ -24,15 +25,19 @@ const ChainEventsDashBoard = () => {
     setItemEditId(0);
     setShowEditModal(true);
   };
+
+  const handleBackToItems = () => {
+    navigate("/items");
+  };
   useEffect(() => {
-    if (currentEditItem && currentEditItem.id > 0) {
-      setItemEditId(currentEditItem.id);
+    if (supplyChainIEditItem && supplyChainIEditItem.id > 0) {
+      setItemEditId(supplyChainIEditItem.id);
       setShowEditModal(true);
     }
-  }, [currentEditItem]);
-  useEffect(() => {
-    if (!showEditModal) {
-      diapatchAction(SetCurrentSupplyChainItem(null));
+  }, [supplyChainIEditItem]);
+  useMemo(() => {
+    if (!showEditModal && supplyChainIItem) {
+      dispatchAction(ChainItemsEventsListTK(supplyChainIItem.id));
     }
   }, [showEditModal]);
   return (
@@ -53,6 +58,9 @@ const ChainEventsDashBoard = () => {
                   onClick={handleNewItemButtonClick}
                 >
                   <PlusLg></PlusLg> New Event
+                </Button>
+                <Button variant="outline-secondary" onClick={handleBackToItems}>
+                  <Arrow90degLeft></Arrow90degLeft> Items
                 </Button>
               </ButtonGroup>
             </Col>

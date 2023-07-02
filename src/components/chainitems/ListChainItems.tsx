@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { ChainItemType } from "../../apptypes";
+import { ChainEventType, ChainItemType } from "../../apptypes";
 import DataTableBase from "../Base/DataTableBase";
 import {
   ChainItemsListTK,
@@ -22,27 +22,30 @@ import {
 } from "../../features/chainItems/chainItemsSlice";
 import { SetCurrentEventsSupplyChainIItem } from "../../features/chainEvents/chainEventsSlice";
 import { useNavigate } from "react-router-dom";
+import { GetChainItemLatestEventTK } from "../../features/chainEvents/chainEventsThunk";
+import { unwrapResult } from "@reduxjs/toolkit";
 
 const ListChainItems = () => {
   const chainItemsList = useAppSelector(
     (state) => state.ChainItems.chainItemsList
   );
-  const diapatchAction = useAppDispatch();
+
+  const dispatchAction = useAppDispatch();
   const navigate = useNavigate();
 
   const SetCurrentItem = (supplyChainItem: ChainItemType) => {
-    diapatchAction(SetCurrentSupplyChainItem(supplyChainItem));
+    dispatchAction(SetCurrentSupplyChainItem(supplyChainItem));
   };
   const SetCurrentEventsItem = (supplyChainItem: ChainItemType) => {
-    diapatchAction(SetCurrentEventsSupplyChainIItem(supplyChainItem));
+    dispatchAction(SetCurrentEventsSupplyChainIItem(supplyChainItem));
   };
   const DeleteCurrentItem = (supplyChainItem: ChainItemType) => {
     if (
       supplyChainItem &&
       confirm("Are sure you want to delete this Item?") == true
     ) {
-      diapatchAction(DeleteChainItemTK(supplyChainItem.id)).then(() => {
-        diapatchAction(LazyUpdateCurrentDeletedItem(supplyChainItem));
+      dispatchAction(DeleteChainItemTK(supplyChainItem.id)).then(() => {
+        dispatchAction(LazyUpdateCurrentDeletedItem(supplyChainItem));
       });
     }
   };
@@ -138,13 +141,25 @@ const ListChainItems = () => {
       name: "Events",
       button: true,
       cell: (rowItem) => {
+        const [latestChainItemEvent, setLatestChainItemEvent] =
+          useState<ChainEventType | null>(null);
+        const [showLatest, setShowLatest] = useState(false);
+        const handleShowLatest = () => {
+          dispatchAction(GetChainItemLatestEventTK(rowItem.id))
+            .then(unwrapResult)
+            .then((response) => {
+              if (response) {
+                // const latestEvent = response as ChainEventType;
+                setLatestChainItemEvent(response);
+                setShowLatest(true);
+              }
+            });
+        };
         const handleShowEvents = () => {
           SetCurrentEventsItem(rowItem);
           navigate("/event");
         };
-        const handleShowLastEvent = () => {
-          SetCurrentEventsItem(rowItem);
-        };
+
         return (
           <>
             <ButtonGroup size="sm">
@@ -163,11 +178,19 @@ const ListChainItems = () => {
                 title="Show last Event"
                 variant="outline-info"
                 size="sm"
-                onClick={handleShowLastEvent}
+                onClick={handleShowLatest}
               >
                 <SkipEndBtn></SkipEndBtn>
               </Button>
             </ButtonGroup>
+            {latestChainItemEvent && showLatest ? (
+              <ShowJsonObjectDataModal
+                scObject={latestChainItemEvent as ChainEventType}
+                ShowModal={showLatest}
+                SetShowHandle={setShowLatest}
+                title={rowItem.item_name + " Latest Event"}
+              />
+            ) : null}
           </>
         );
       },
@@ -175,7 +198,7 @@ const ListChainItems = () => {
   ];
 
   useMemo(() => {
-    diapatchAction(ChainItemsListTK());
+    dispatchAction(ChainItemsListTK());
   }, []);
   useEffect(() => {}, [chainItemsList]);
 

@@ -9,7 +9,6 @@ export const LoginCurrentUserTK = createAsyncThunk(
     SC_API.Auth_API.LoginUser(userData) as AxiosPromise<LoggedUserType>
 );
 
-export const GetUserListTK = createAsyncThunk(
-  "UserList",
-  () => SC_API.Auth_API.ListUsers() as AxiosPromise<LoggedUserType[]>
+export const GetUserListTK = createAsyncThunk("UserList", () =>
+  SC_API.Auth_API.ListUsers()
 );

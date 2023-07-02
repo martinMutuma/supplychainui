@@ -40,6 +40,6 @@ const chainEventTypesListSlice = createSlice({
   },
 });
 
-export const {} = chainEventTypesListSlice.actions;
+// export const {} = chainEventTypesListSlice.actions;
 
 export default chainEventTypesListSlice.reducer;

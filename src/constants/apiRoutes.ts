@@ -5,7 +5,8 @@ const ApiEndPoints: { [key: string]: string } = {
   USERlIST: "api/users/list/",
   LISTCHAINITEMS: "api/supplychain/items/",
   LISTCHAINEVENTS: "api/supplychain/events/",
-  LISTCHAINEITEMSVENTS: "api/supplychain/item/events/",
+  LISTCHAINEITEMEVENTS: "api/supplychain/item/events/",
+  LISTCHAINEITEMLATESTEVENT: "api/supplychain/item/events/latest/",
   LISTCHAINEVENTTYPES: "/api/supplychain/event/types/",
   LISTCHAINEVENTSTATUS: "/api/supplychain/event/status/",
 };

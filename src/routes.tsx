@@ -26,7 +26,7 @@ const appRoutes: AppRouteType[] = [
     path: "/event",
     title: "Chain Events",
     component: ChainEventsDashBoard,
-    showInTopMenu: true,
+    showInTopMenu: false,
   },
   { path: "/about", title: "About", showInTopMenu: true },
   {
