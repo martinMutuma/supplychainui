@@ -29,3 +29,5 @@ To build
 ```sh
 $ npm run build
 ```
+hosted app (https://dazzling-malasada-ec8e61.netlify.app)
+
