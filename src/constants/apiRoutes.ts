@@ -1,4 +1,11 @@
-export const APIBASEURL: string = "http://127.0.0.1:8000/";
+export const APIBASEURL: string = getApiUrl();
+
+function getApiUrl() {
+  if ((import.meta.env.VITE_APP_ENVIRONMENT = "hosted")) {
+    return "https://martinmutuma.pythonanywhere.com/";
+  }
+  return "http://127.0.0.1:8000/";
+}
 
 const ApiEndPoints: { [key: string]: string } = {
   LOGIN: "auth/login/",
